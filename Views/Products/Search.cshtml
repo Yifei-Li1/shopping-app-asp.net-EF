@@ -1,0 +1,25 @@
+﻿
+
+@{
+    ViewBag.Title = "Search";
+}
+
+@model IEnumerable<jooledotnet.Models.Product>
+
+@using (Html.BeginForm("Search", "Products", FormMethod.Get))
+{
+    <input type="text" name="searchQuery" />
+    <input type="submit" value="Search" />
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <div>
+            <h4>@item.Model</h4>
+            <p>@item.Description</p>
+            // Display other properties as needed
+        </div>
+    }
+}

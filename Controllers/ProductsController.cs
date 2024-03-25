@@ -115,7 +115,17 @@ namespace jooledotnet.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        public ActionResult Search(string searchQuery)
+        {
+            using (var context = new ProductContext())
+            {
+                var results = context.Products
+                                     .Where(p => p.Series.Contains(searchQuery) || p.Description.Contains(searchQuery) || p.Menufacture.Contains(searchQuery) || p.Model.Contains(searchQuery))
+                                     .ToList();
 
+                return View(results); // Returns the Search view with the results
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
