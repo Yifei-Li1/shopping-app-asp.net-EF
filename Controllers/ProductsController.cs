@@ -37,94 +37,70 @@ namespace jooledotnet.Controllers
         }
 
         // GET: Products/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+       
+        //public ActionResult Search(string term)
+        //{
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,Menufacture,Category,Description,Series,Model,Price,DateMenufactured")] Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Products.Add(product);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+        //    using (var context = new ProductContext())
+        //    {
+        //        var results = context.Products
+        //                    .Where(p => p.SubCategory.Contains(term))
+        //                    .ToList();
 
-            return View(product);
-        }
-
-        // GET: Products/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            return View(product);
-        }
-
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,Menufacture,Category,Description,Series,Model,Price,DateMenufactured")] Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(product);
-        }
-
-        // GET: Products/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            return View(product);
-        }
-
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-        public ActionResult Search(string searchQuery)
+        //        return View(results); // Returns the Search view with the results
+        //    }
+        //}
+        public ActionResult Search(string searchQuery, decimal? minPrice, decimal? maxPrice)
         {
             using (var context = new ProductContext())
             {
                 var results = context.Products
-                                     .Where(p => p.Series.Contains(searchQuery) || p.Description.Contains(searchQuery) || p.Menufacture.Contains(searchQuery) || p.Model.Contains(searchQuery))
-                                     .ToList();
+                             .Where(p => p.SubCategory.Contains(searchQuery))
+                             .ToList();
+                if (minPrice.HasValue)
+                {
+                    results = results.FindAll(p => p.Price >= minPrice.Value);
+                }
 
+                // Filter by maxPrice if it has a value
+                if (maxPrice.HasValue)
+                {
+                    results = results.FindAll(p => p.Price <= maxPrice.Value);
+                }
+                ViewBag.searchQuery = searchQuery;
                 return View(results); // Returns the Search view with the results
             }
+        }
+
+        public ActionResult AutoCompleteSearch(string term)
+        {
+            var results = db.Products
+                .Where(d => d.SubCategory.StartsWith(term)).Select(d => new { label = d.Model }).ToList();
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+        //public ActionResult Details(int id)
+        //{
+        //    using(var context = new ProductContext())
+        //    {
+        //        var product = context.Products.Where(p => p.ProductID == id);
+        //        return View(product);
+
+        //    }
+
+        //}
+        [HttpPost]
+        public ActionResult Compare(int[] selectedProducts)
+        {
+            if (selectedProducts == null || selectedProducts.Length < 2 || selectedProducts.Length > 4)
+            {
+                // Handle error: You must select between 2 to 4 products to compare.
+                 // Assuming "Index" is your search results page.
+                 //alart 
+            }
+
+            var productsToCompare = db.Products.Where(p => selectedProducts.Contains(p.ProductID)).ToList();
+
+            return View(productsToCompare);
         }
         protected override void Dispose(bool disposing)
         {

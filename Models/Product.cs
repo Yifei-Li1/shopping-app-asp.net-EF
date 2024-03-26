@@ -13,7 +13,8 @@ namespace jooledotnet.Models
         public string Description { get; set; }
         public string Series { get; set; }
         public string Model { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
+        public string SubCategory { get; set; }
         public DateTime DateMenufactured { get; set; }
 
 

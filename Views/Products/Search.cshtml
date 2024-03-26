@@ -1,25 +1,105 @@
-﻿
-
-@{
-    ViewBag.Title = "Search";
-}
-
-@model IEnumerable<jooledotnet.Models.Product>
-
-@using (Html.BeginForm("Search", "Products", FormMethod.Get))
-{
-    <input type="text" name="searchQuery" />
-    <input type="submit" value="Search" />
-}
-
-@if (Model != null)
-{
-    foreach (var item in Model)
-    {
-        <div>
-            <h4>@item.Model</h4>
-            <p>@item.Description</p>
-            // Display other properties as needed
-        </div>
+﻿﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" 
+    <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/Content/search.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            var availableTags = [
+                "ActionScript",
+                "AppleScript",
+                "Asp",
+                "BASIC",
+                "C",
+                "C++",
+                "Clojure",
+                "COBOL",
+                "ColdFusion",
+                "Erlang",
+                "Fortran",
+                "Groovy",
+                "Haskell",
+                "Java",
+                "JavaScript",
+                "Lisp",
+                "Perl",
+                "PHP",
+                "Python",
+                "Ruby",
+                "Scala",
+                "Scheme"
+            ];
+            $("#searchQuery").autocomplete({
+                source: availableTags
+            });
+        });
+    </script>
+</head>
+<body>
+    @{
+        ViewBag.Title = "Search";
     }
-}
+
+    @model IEnumerable<jooledotnet.Models.Product>
+
+    @using (Html.BeginForm("Search", "Products", FormMethod.Get))
+    {
+        <input type="text" name="searchQuery" id="searchQuery" />
+        <input type="submit" value="Search" />
+        
+    }
+<div class="search-container">
+    <div class="filter-container">
+        Filter
+        @using (Html.BeginForm("Search", "Products", FormMethod.Get))
+        {
+            <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+            <label for="minPrice">Min Price:</label>
+            <input type="number" name="minPrice" step="0.01" />
+
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" name="maxPrice" step="0.01" />
+
+            <input type="submit" value="Filter" />
+        }
+    </div>
+    @using (Html.BeginForm("Compare", "Products", FormMethod.Post))
+    {
+        <div class="result-container">
+            <input type="submit" value="Compare" />
+            @if (Model != null)
+            {
+                <div class="result">
+                    @foreach (var item in Model)
+                    {
+                        <div>
+                            <h4>@item.Model</h4>
+                            <h4>@item.Series</h4>
+                            <h4>@item.Price</h4>
+                            <p>@item.Description</p>
+                            <label>compare</label>
+                            <input type="checkbox" name="selectedProducts" value="@item.ProductID" />
+                            @Html.ActionLink("Details", "Details", new { id = item.ProductID })
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+    }
+
+</div>
+    
+
+</body>
+</html>

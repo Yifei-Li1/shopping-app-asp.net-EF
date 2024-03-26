@@ -1,0 +1,44 @@
+﻿@model IEnumerable<jooledotnet.Models.Product>
+
+@{
+    ViewBag.Title = "Compare";
+}
+
+<h2>Compare</h2>
+
+<p>
+    @{
+        var backUrl = Request.UrlReferrer?.ToString();
+    }
+
+    @if (!string.IsNullOrEmpty(backUrl))
+    {
+        <a href="@backUrl">Back to Search Results</a>
+    }
+    else
+    {
+        <a href="@Url.Action("Index", "Product")">Back to Products</a>
+    }
+
+</p>
+<h2>Compare Products</h2>
+
+<table>
+    <tr>
+        <th>Product Model</th>
+        <th>Series</th>
+        <th>Menufacture</th>
+        <th>Description</th>
+        <!-- Add headers for other attributes you want to compare -->
+    </tr>
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>@item.Model</td>
+    <td>@item.Series</td>
+    <td>@item.Menufacture</td>
+    <td>@item.Description</td>
+    <!-- Display other attributes -->
+</tr>
+    }
+</table>

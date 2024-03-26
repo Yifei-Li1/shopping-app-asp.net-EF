@@ -1,0 +1,16 @@
+﻿.search-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 30em;
+}
+.filter-container {
+    background-color: aqua;
+}
+.result-container {
+}
+.result {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 140px 140px 140px 140px;
+}
